@@ -34,6 +34,10 @@ def iotclick(event, context):
 
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 
+    user_id = 0
+    if event['serialNumber'] = 'G030JF056266U9CF'
+      user_id = 1
+      
     ip = None
     try:
         ip = event['requestContext']['identity']['sourceIp']
