@@ -3,23 +3,27 @@ import logging
 import os
 import time
 import uuid
+from decimal import *
+from functools import wraps
+from urllib import urlopen
 
 import jwt
 import boto3
 import geoip2.database
-
 from functools import wraps
 import jwt
 from urllib import urlopen
 from decimal import *
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource('dynamodb')
 READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
-AUTH0_CLIENT_ID = 'eRoI93Zle2L4iBWmKmdFcrU2dfufX3qu6-'
-AUTH0_CLIENT_SECRET = 'YUg9btEv9BhBfYBTIn76mkQlX4DQUg'
+
+AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
+AUTH0_CLIENT_SECRET = os.environ['AUTH0_CLIENT_SECRET']
 
 
 def get_user(event):
@@ -41,7 +45,8 @@ def get_user(event):
 
 
 def create(event, context):
-    user_id = get_user(event)
+
+    user_id = 1#get_user(event)
     if not user_id:
         return {'message': 'Unauthorized'}
 
