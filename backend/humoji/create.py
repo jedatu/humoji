@@ -7,7 +7,7 @@ import uuid
 import boto3
 import geoip2.database
 
-from . import auth
+from humoji import auth
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

@@ -3,10 +3,9 @@ import os
 
 import boto3
 
-from . import decimalencoder, auth
+from humoji import auth, decimalencoder
 
 dynamodb = boto3.resource('dynamodb')
-
 
 
 def get(event, context):
