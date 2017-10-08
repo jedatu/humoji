@@ -3,67 +3,17 @@ import logging
 import os
 import time
 import uuid
-from decimal import *
-from functools import wraps
-from urllib import urlopen
 
 import boto3
 import geoip2.database
-from jose import jwt
+
+from humoji import get_user
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource('dynamodb')
 READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
-AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
-AUTH0_CLIENT_SECRET = os.environ['AUTH0_CLIENT_SECRET']
-AUTH0_DOMAIN = 'jedatu.auth0.com'
-API_AUDIENCE = AUTH0_CLIENT_ID
-ALGORITHMS = ["RS256"]
-
-
-def get_token(event):
-    """Obtains the access token from the Authorization Header
-    """
-    auth = event.get('authorizationToken')
-    token = 1
-    try:
-        parts = auth.split()
-        token = parts[1]
-    except:
-        pass
-    return token
-
-
-def get_user(event):
-    token = get_token(event)
-    jsonurl = urlopen("https://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
-    jwks = json.loads(jsonurl.read())
-    unverified_header = jwt.get_unverified_header(token)
-    rsa_key = {}
-    for key in jwks["keys"]:
-        if key["kid"] == unverified_header["kid"]:
-            rsa_key = {
-                "kty": key["kty"],
-                "kid": key["kid"],
-                "use": key["use"],
-                "n": key["n"],
-                "e": key["e"]
-            }
-    if rsa_key:
-        try:
-            user_id = jwt.decode(
-                token,
-                rsa_key,
-                algorithms=ALGORITHMS,
-                audience=API_AUDIENCE,
-                issuer="https://" + AUTH0_DOMAIN + "/"
-            )
-        except:
-            pass
-        else:
-            return user_id
 
 
 def create(event, context):
