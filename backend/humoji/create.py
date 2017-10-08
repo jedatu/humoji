@@ -17,7 +17,7 @@ READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
 
 
 def create(event, context):
-    mood_map = {0: 'angry', 1: 'sad', 2: 'indifferent', 3: 'content', 4: 'happy'}
+    mood_map = {5: 'angry', 4: 'sad', 3: 'indifferent', 2: 'content', 1: 'happy'}
     user_id = auth.get_user(event)
     if not user_id:
         return {'message': 'Unauthorized'}
@@ -50,8 +50,9 @@ def create(event, context):
     # write the todo to the database
     table.put_item(Item=item)
     print(
-        'RECEIVED interaction from our website {}. The mood is: {}'.format(
-            item['location'].get('city'), mood_map[int(data['mood'])]
+        'RECEIVED interaction from our website. The mood is: {}. Location: {}'.format(
+            mood_map[int(data['mood'])],
+            item['location'].get('city')
         )
     )
     # create a response

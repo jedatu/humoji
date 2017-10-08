@@ -64,7 +64,7 @@ def iotclick(event, context):
         }
     }
     print(
-        'RECEIVED IOT AWS button click from {}. The mood is: {}'.format(item['location'].get('city'), mood_map[mood])
+        'RECEIVED IOT AWS button click. The mood is: {}'.format(mood_map[mood])
     )
     return response
 
