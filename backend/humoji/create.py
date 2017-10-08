@@ -17,6 +17,7 @@ READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
 
 
 def create(event, context):
+    mood_map = {0: 'angry', 1: 'sad', 2: 'indifferent', 3: 'content', 4: 'happy'}
     user_id = auth.get_user(event)
     if not user_id:
         return {'message': 'Unauthorized'}
@@ -26,7 +27,6 @@ def create(event, context):
         logging.error("Validation Failed")
         raise Exception("Couldn't create the mood item.")
         return
-    print(event)
     # print(event['requestContext']['identity']['sourceIp'])
 
     timestamp = int(time.time() * 1000)
@@ -49,7 +49,11 @@ def create(event, context):
 
     # write the todo to the database
     table.put_item(Item=item)
-
+    print(
+        'RECEIVED interaction from our website {}. The mood is: {}'.format(
+            item['location'].get('city'), mood_map[int(data['mood'])]
+        )
+    )
     # create a response
     response = {
         "statusCode": 200,
@@ -73,7 +77,6 @@ def enrich_payload(payload, ip=None):
         location = get_location_for_ip(ip)
         if location:
             payload['location'] = location
-    print('payload', payload)
     return payload
 
 

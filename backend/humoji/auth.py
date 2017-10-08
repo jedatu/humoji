@@ -27,8 +27,6 @@ def get_token(event):
         token = parts[1]
     except:
         token = 1
-    print('\nTOKEN: ', token)
-    print('\nAUTH0_CLIENT_ID ', AUTH0_CLIENT_ID)
     return token
 
 
@@ -39,7 +37,6 @@ def get_user(event):
         jsonurl = urlopen("https://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
         jwks = json.loads(jsonurl.read())
         rsa_key = {}
-        print('\njwks: ', jwks)
 
         for key in jwks["keys"]:
             rsa_key = {
