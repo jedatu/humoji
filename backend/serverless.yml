@@ -1,0 +1,112 @@
+service: humoji1
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python2.7
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+#  auth:
+#    handler: humoji/auth
+#  publicEndpoint:
+#    handler: humoji/public_auth
+#    events:
+#      - http:
+#          path: api/public
+#          method: get
+#          integration: lambda
+#          cors: true
+#  privateEndpoint:
+#    handler: humoji/private_auth.private
+#    events:
+#      - http:
+#          path: api/private
+#          method: get
+#          integration: lambda
+#          authorizer: auth # See custom authorizer docs here: http://bit.ly/2gXw9pO
+#          cors:
+#            origins:
+#              - '*'
+#            headers:
+#              - Content-Type
+#              - X-Amz-Date
+#              - Authorization
+#              - X-Api-Key
+#              - X-Amz-Security-Token
+  create:
+    handler: humoji/create.create
+    events:
+      - http:
+          path: humoji
+          method: post
+          cors: true
+
+  list:
+    handler: humoji/list.list
+    events:
+      - http:
+          path: humoji
+          method: get
+          cors: true
+
+  get:
+    handler: humoji/get.get
+    events:
+      - http:
+          path: humoji/{id}
+          method: get
+          cors: true
+
+  update:
+    handler: humoji/update.update
+    events:
+      - http:
+          path: humoji/{id}
+          method: put
+          cors: true
+
+  delete:
+    handler: humoji/delete.delete
+    events:
+      - http:
+          path: humoji/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    HumojiDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: timestamp
+            AttributeType: N
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+          -
+            AttributeName: timestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
