@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Notifications, {notify} from 'react-notify-toast';
+import logo from './Mood/1.svg';
+import Login from './Login'
+import Logout from './Logout'
 
 import axios from 'axios';
 import auth0 from 'auth0-js';
@@ -28,13 +31,21 @@ class App extends Component {
   render() {
     const {mood} = this.state;
 
+    let button;
+    if (!this.props.auth.isAuthenticated()) {
+      button = <Login auth={this.props.auth} />
+    } else {
+      button = <Logout auth={this.props.auth} />
+    }
+
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">humoji</h1>
-
+          {button}
         </header>
+        <Notifications />
         <p className="App-intro">
 
         </p>

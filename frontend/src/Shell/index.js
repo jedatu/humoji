@@ -20,10 +20,8 @@ export default class Shell extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">humoji</h1>
-
         </header>
         <p className="App-intro">
-
         </p>
       </div>
     );
