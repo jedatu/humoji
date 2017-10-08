@@ -21,8 +21,17 @@ exports.handler = function _event(event, context, callback) {
       }
       else {
         var text = 'thx'
+        var img1 = 'https://media.giphy.com/media/EvYHHSntaIl5m/giphy.gif'
+        var img4 = 'https://media.giphy.com/media/mHEes6Quf8XK0/giphy.gif'
+        var img = 'http://s9.favim.com/orig/131110/cat-cute-followers-funny-Favim.com-1048338.gif'
+        if (mood === 1) {
+          img = img1
+        }
+        if (mood === 4) {
+          img = img4
+        }
       }
-      callback(null, {text})
+      callback(null, {text, attachments:[{image_url: img}]})
     })
   }
 }
