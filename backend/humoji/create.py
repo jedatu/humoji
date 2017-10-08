@@ -52,7 +52,7 @@ def create(event, context):
     print(
         'RECEIVED interaction from our website. The mood is: {}. Location: {}'.format(
             mood_map[int(data['mood'])],
-            item['location'].get('city')
+            item['location'].get('country')
         )
     )
     # create a response
