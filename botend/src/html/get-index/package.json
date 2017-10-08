@@ -1,6 +1,7 @@
 {
   "name": "humoji-get-index",
   "dependencies": {
-    "@architect/functions": "^1.6.2"
+    "@architect/functions": "^1.6.2",
+    "slack": "^9.0.5"
   }
 }
