@@ -1,0 +1,6 @@
+{
+  "name": "humoji-slack-bot-actions",
+  "dependencies": {
+    "slack": "^9.0.5"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "humoji-slack-bot-slash",
+  "dependencies": {
+    "slack": "^9.0.5",
+    "tiny-json-http": "^5.1.2"
+  }
+}
