@@ -3,14 +3,14 @@ import os
 
 import boto3
 
-from humoji import decimalencoder, get_user
+from . import decimalencoder, auth
 
 dynamodb = boto3.resource('dynamodb')
 
 
 
 def get(event, context):
-    user_id = get_user(event)
+    user_id = auth.get_user(event)
     if not user_id:
         return {'message': 'Unauthorized'}
 

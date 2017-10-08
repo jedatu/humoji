@@ -7,7 +7,7 @@ import uuid
 import boto3
 import geoip2.database
 
-from humoji import get_user
+from . import auth
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -17,7 +17,7 @@ READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
 
 
 def create(event, context):
-    user_id = get_user(event)
+    user_id = auth.get_user(event)
     if not user_id:
         return {'message': 'Unauthorized'}
 
