@@ -2,6 +2,13 @@ service: humoji1
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
 provider:
   name: aws
   runtime: python2.7
@@ -19,33 +26,6 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
-#  auth:
-#    handler: humoji/auth
-#  publicEndpoint:
-#    handler: humoji/public_auth
-#    events:
-#      - http:
-#          path: api/public
-#          method: get
-#          integration: lambda
-#          cors: true
-#  privateEndpoint:
-#    handler: humoji/private_auth.private
-#    events:
-#      - http:
-#          path: api/private
-#          method: get
-#          integration: lambda
-#          authorizer: auth # See custom authorizer docs here: http://bit.ly/2gXw9pO
-#          cors:
-#            origins:
-#              - '*'
-#            headers:
-#              - Content-Type
-#              - X-Amz-Date
-#              - Authorization
-#              - X-Api-Key
-#              - X-Amz-Security-Token
   create:
     handler: humoji/create.create
     events:

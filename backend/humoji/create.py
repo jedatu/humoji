@@ -4,40 +4,72 @@ import os
 import time
 import uuid
 
+import jwt
 import boto3
+import geoip2.database
+
+from functools import wraps
+import jwt
+from urllib import urlopen
+from decimal import *
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 dynamodb = boto3.resource('dynamodb')
+READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
+AUTH0_CLIENT_ID = 'eRoI93Zle2L4iBWmKmdFcrU2dfufX3qu6-'
+AUTH0_CLIENT_SECRET = 'YUg9btEv9BhBfYBTIn76mkQlX4DQUg'
+
+
+def get_user(event):
+    auth_token = event.get('authorizationToken')
+    if auth_token:
+        auth_token = auth_token
+        logger.info(auth_token)
+
+    options = {
+        'audience': AUTH0_CLIENT_ID
+    }
+
+    try:
+        user_id = jwt.decode(auth_token, AUTH0_CLIENT_SECRET, options)
+    except:
+        return None
+    else:
+        return user_id
 
 
 def create(event, context):
+    user_id = get_user(event)
+    if not user_id:
+        return {'message': 'Unauthorized'}
+
     data = json.loads(event['body'])
     if 'mood' not in data:
         logging.error("Validation Failed")
         raise Exception("Couldn't create the mood item.")
         return
     print(event)
+    # print(event['requestContext']['identity']['sourceIp'])
 
     timestamp = int(time.time() * 1000)
 
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
-    # user_id = context['user_id']
+
+    ip = None
+    try:
+        ip = event['requestContext']['identity']['sourceIp']
+    except:
+        pass
 
     item = {
         'id': str(uuid.uuid1()),
-        # 'user_id': user_id,
-        'mood': int(data['mood']),
-        # 'user_id': str(uuid.uuid1()),
         'timestamp': timestamp,
+        'mood': int(data['mood']),
+        'user_id': user_id
     }
-
-    try:
-        ip = event['requestContext']['identity']['sourceIp']
-        request_context = event['requestContext']
-    except:
-        pass
-    else:
-        item['ip'] = ip
-        item['request_context'] = request_context
-    print('\n\n\n', item)
+    enrich_payload(item, ip)
 
     # write the todo to the database
     table.put_item(Item=item)
@@ -53,3 +85,40 @@ def create(event, context):
     }
 
     return response
+
+
+def enrich_payload(payload, ip=None):
+    """All enrichment of the given payload should happen in this function.
+    It accepts the initial payload and returns the payload with additional
+    information.
+    """
+    if ip:
+        payload['ip'] = ip
+        location = get_location_for_ip(ip)
+        if location:
+            payload['location'] = location
+    print('payload', payload)
+    return payload
+
+
+def get_location_for_ip(ip, reader=READER):
+    """For a given IP Address, returns a dictionary with city, region,
+    country, latitude, and longitude
+    On failure it will return an empty dictionary, rather than raise an exception.
+    """
+
+    location = {}
+
+    try:
+        resp = READER.city(ip)
+        location = {
+            'city': resp.city.name,
+            'region': resp.subdivisions.most_specific.name,
+            'country': resp.country.name,
+            'latitude': str(resp.location.latitude),
+            'longitude': str(resp.location.longitude)
+        }
+    except Exception as e:
+        logger.exception('get_location failed.')
+
+    return location
