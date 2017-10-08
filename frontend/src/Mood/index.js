@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Notifications, {notify} from 'react-notify-toast';
 
 import face1 from './1.svg';
 import face2 from './2.svg';
@@ -38,6 +39,17 @@ export default class Mood extends Component {
       }
     }).then(response => {
       console.log(response.data);
+      let messages = [
+        "",
+        "Super!",
+        "Glad to hear",
+        "Hmm...",
+        "Meh",
+        "Things are looking up!"
+      ]
+      let message = messages[id];
+      let myColor = { background: '#3ddb6a', text: "#333333" };
+      notify.show(message, "custom", 1000, myColor);
       this.setState(response.data);
     });
   }
@@ -55,7 +67,7 @@ export default class Mood extends Component {
     const {mood} = this.state;
 
     return (
-        <p className="App-intro">
+        <p style={{textAlign: 'center'}} className="App-intro">
             {this.renderEmojis()}
         </p>
     );

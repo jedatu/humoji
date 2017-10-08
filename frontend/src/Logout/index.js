@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-export default class Callback extends Component {
+import auth0 from 'auth0-js';
+
+export default class Login extends Component {
 
   constructor(props, context) {
     super(props, context)
@@ -13,7 +15,7 @@ export default class Callback extends Component {
     const {mood} = this.state;
 
     return (
-        <p style={{textAlign:'center'}}>Success</p>
+        <button onClick={this.props.auth.logout}>Logout</button>
     );
   }
 }

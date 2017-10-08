@@ -1,7 +1,8 @@
 import history from './history';
 import auth0 from 'auth0-js';
 import { AUTH_CONFIG } from './auth0-variables';
-console.log(AUTH_CONFIG);
+import Notifications, {notify} from 'react-notify-toast';
+
 export default class Auth {
   auth0 = new auth0.WebAuth({
     domain: AUTH_CONFIG.domain,
@@ -20,7 +21,6 @@ export default class Auth {
   }
 
   login() {
-    localStorage.setItem('last_page', window.location.pathname)
     this.auth0.authorize()
   }
 
@@ -28,11 +28,7 @@ export default class Auth {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
-        const lastPage = localStorage.getItem('last_page')
-        if (lastPage) {
-          return history.replace(`${lastPage}`)
-        }
-        history.replace('/');
+        history.replace('/mood');
       } else if (err) {
         history.replace('/');
         console.log(err);
@@ -49,7 +45,7 @@ export default class Auth {
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
     // navigate to the home route
-    history.replace('/');
+    history.replace('/mood');
   }
 
   logout() {
@@ -57,6 +53,9 @@ export default class Auth {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+
+    let myColor = { background: '#3ddb6a', text: "#333333" };
+    notify.show("Logged out.", "custom", 1000, myColor);
     // navigate to the home route
     history.replace('/');
   }

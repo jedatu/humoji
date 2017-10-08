@@ -4,35 +4,40 @@ import os
 import time
 import uuid
 
+import jwt
 import boto3
 import geoip2.database
 
-from humoji import auth
+from functools import wraps
+import jwt
+from urllib import urlopen
+from decimal import *
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource('dynamodb')
 READER = geoip2.database.Reader('geolite/GeoLite2-City.mmdb')
+AUTH0_CLIENT_ID = 'eRoI93Zle2L4iBWmKmdFcrU2dfufX3qu6-'
+AUTH0_CLIENT_SECRET = 'YUg9btEv9BhBfYBTIn76mkQlX4DQUg'
 
+def iotclick(event, context):
 
-def create(event, context):
-    user_id = auth.get_user(event)
-    if not user_id:
-        return {'message': 'Unauthorized'}
-
-    data = json.loads(event['body'])
-    if 'mood' not in data:
-        logging.error("Validation Failed")
-        raise Exception("Couldn't create the mood item.")
-        return
+    mood = 0 # Long Press  
     print(event)
-    # print(event['requestContext']['identity']['sourceIp'])
-
+    if event['clickType'] = 'DOUBLE':
+      mood = 4
+    elif event['clickType'] = 'SINGLE':
+      mood = 2
+    
     timestamp = int(time.time() * 1000)
 
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 
+    user_id = 0
+    if event['serialNumber'] = 'G030JF056266U9CF'
+      user_id = 1
+      
     ip = None
     try:
         ip = event['requestContext']['identity']['sourceIp']
@@ -42,7 +47,7 @@ def create(event, context):
     item = {
         'id': str(uuid.uuid1()),
         'timestamp': timestamp,
-        'mood': int(data['mood']),
+        'mood': int(mood),
         'user_id': user_id
     }
     enrich_payload(item, ip)

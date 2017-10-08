@@ -1,12 +1,18 @@
-import os
 import json
+import os
 
-from todos import decimalencoder
 import boto3
+
+from humoji import auth, decimalencoder
+
 dynamodb = boto3.resource('dynamodb')
 
 
 def get(event, context):
+    user_id = auth.get_user(event)
+    if not user_id:
+        return {'message': 'Unauthorized'}
+
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 
     # fetch todo from the database

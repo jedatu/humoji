@@ -1,7 +1,7 @@
 
 let callbackUrl = 'http://localhost:3000/callback'
 if (process.env.NODE_ENV === 'production') {
-  callbackUrl = 'https://humoji.surge.sh/callback'
+  callbackUrl = 'https://humoji.netlify.com/callback'
 }
 
 export const AUTH_CONFIG = {
