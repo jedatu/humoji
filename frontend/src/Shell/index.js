@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-
-import axios from 'axios';
 import auth0 from 'auth0-js';
 import './App.css';
+import logo from '../logo.svg';
 
-class App extends Component {
+export default class Shell extends Component {
   //curl -X POST https://x5p9i5jbd5.execute-api.us-east-1.amazonaws.com/dev/humoji --data '{ "mood": 2}'
 
   constructor(props, context) {
@@ -15,18 +13,7 @@ class App extends Component {
     }
   }
 
-  doAjax = (id) => {
-    axios.post('https://x5p9i5jbd5.execute-api.us-east-1.amazonaws.com/dev/humoji', {
-      mood: id
-    }).then(response => {
-      console.log(response.data);
-      this.setState(response.data);
-    });
-  }
-
-
   render() {
-    const {mood} = this.state;
 
     return (
       <div className="App">
@@ -42,5 +29,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;
